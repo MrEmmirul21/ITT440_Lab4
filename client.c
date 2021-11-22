@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h>       //strlen
-#include <sys/socket.h>
-#include <arpa/inet.h>    // inet_addr
-//This program shows how to create a socket
+#include <string.h>      //strlen
+#include <sys/socket.h>  //socket()
+#include <arpa/inet.h>   // inet_addr()
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +13,7 @@ int main(int argc, char *argv[])
 
   // create socket
   socket_desc = socket(AF_INET,SOCK_STREAM,0);
+
   if (socket_desc == -1)
   {
     printf("Could not create socket");
@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
   server.sin_family = AF_INET;
   server.sin_port = htons( 8888 );
 
-  // connect to the remote server(ubuntu server)
-  if ( connect(socket_desc,(struct sockaddr *)&server,sizeof(server)) <0 )
+  // connect to remote server(ubuntu server)
+  if (connect(socket_desc,(struct sockaddr *)&server,sizeof(server)) < 0)
   {
     puts("Error connection");
     return 1;
@@ -32,22 +32,24 @@ int main(int argc, char *argv[])
 
   puts("Connected\n");
 
-  // send some data to server
-  message = "Hello mr.server, I'm mr.client";
-  if( send(socket_desc, message, strlen(message),0) <0 )
+  // send data to remote server
+  message = "connect";
+  if(send(socket_desc,message,strlen(message),0) < 0)
   {
     puts("Sending failed\n");
     return 1;
   }
   puts("Sending successfull\n");
 
-  // receive a reply from the server
-  if( recv(socket_desc,server_reply,2000,0) <0 )
+  // receive data from remote server
+  if(recv(socket_desc,server_reply,2000,0) < 0)
   {
     puts("Receiving failed\n");
   }
   puts("Receiving successfull\n");
   puts(server_reply);
+
+  close(socket_desc);
 
   return 0;
 }
